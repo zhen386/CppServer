@@ -10,7 +10,7 @@
 
 #define PORT 3531
 
-using RequestHandler = std::function<std::string(const std::string&)>;
+using RequestHandler = std::function<std::string(const std::string&)>; //定义请求处理函数类型
 
 std::map<std::string, RequestHandler> route_table;
 
