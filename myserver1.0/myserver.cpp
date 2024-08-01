@@ -1,35 +1,73 @@
-#include <iostream>     //标准输入输出库
-#include <map>          //标准映射容器库
-#include <functional>   //函数对象库，用于定义函数类型
-#include <string>       //字符串处理库
-#include <sys/socket.h> //socket编程接口
-#include <stdlib.h>     //标准库。用于通用工具函数    
-#include <netinet/in.h> //网络字节序转换函数
-#include <string.h>     //字符串处理函数
-#include <unistd.h>     //UNIX标准函数库
+#include <iostream>     // 标准输入输出库
+#include <map>          // 标准映射容器库
+#include <functional>   // 函数对象库，用于定义函数类型
+#include <string>       // 字符串处理库
+#include <sys/socket.h> // socket编程接口
+#include <stdlib.h>     // 标准库。用于通用工具函数    
+#include <netinet/in.h> // 网络字节序转换函数
+#include <string.h>     // 字符串处理函数
+#include <unistd.h>     // UNIX标准函数库
 
 #define PORT 3531
 
-using RequestHandler = std::function<std::string(const std::string&)>; //定义请求处理函数类型
+using RequestHandler = std::function<std::string(const std::string&)>; // 定义请求处理函数类型
 
-std::map<std::string, RequestHandler> route_table;
+std::map<std::string, RequestHandler> get_routes;
+std::map<std::string, RequestHandler> post_routes;
 
 void setupRoutes(){
-    route_table["/"] = [](const std::string& request){
+    // get请求处理表
+    get_routes["/"] = [](const std::string& request){
         return "Hello from Macbook air!";
     };
 
-    route_table["/register"] = [](const std::string& request){
+    get_routes["/register"] = [](const std::string& request){
+        return "Please use POST to register";
+    };
+
+    get_routes["/login"] = [](const std::string& request){
+        return "Please use POST to login";
+    };
+
+    // post请求处理表
+    // post_routes["/"] = [](const std::string& request){
+    //     return "Hello from Macbook air!";
+    // };
+
+    post_routes["/register"] = [](const std::string& request){
         return "Register Success!";
     };
 
-    route_table["/login"] = [](const std::string& request){
+    post_routes["/login"] = [](const std::string& request){
         return "Login Success!";
     };
+}
 
-    // route_table["/"] = [](const std::string& request){
-    //     return "";
-    // };
+// 解析http请求
+std::pair<std::string, std::string> parseHttpRequest(const std::string& request){
+    // 定位第一个空格
+    size_t method_end = request.find(" ");
+    // 提取http方法
+    std::string method = request.substr(0, method_end);
+
+    // 定位第二个空格
+    size_t uri_end = request.find(" ", method_end + 1);
+    // 提取uri
+    std::string uri = request.substr(method_end + 1, uri_end - method_end - 1);
+
+    return {method, uri};
+}
+
+// 处理http请求
+std::string handlerHttpRequest(const std::string& method, const std::string& uri, const std::string& body){
+    // 检查GET请求是否在路由表中
+    if(method == "GET" && get_routes.count(uri) > 0){
+        return get_routes[uri](body);
+    }else if(method == "POST" && post_routes.count(uri) > 0){
+        return post_routes[uri](body);
+    }else{
+        return "404 Not Found";
+    }
 }
 
 int main(){
@@ -56,15 +94,11 @@ int main(){
         read(new_socket, buffer, 1024);
         std::string request(buffer);
 
-        std::string uri = request.substr(request.find(" ") + 1);
-        uri = uri.substr(0, uri.find(" "));
+        // 解析请求
+        auto [method, uri] = parseHttpRequest(request);
 
-        std::string response_body;
-        if(route_table.count(uri) > 0){
-            response_body = route_table[uri](request);
-        }else{
-            response_body = "404 Not Found";
-        }
+        // 处理请求
+        std::string response_body = handlerHttpRequest(method, uri, request);
 
         std::string response = "HTTP/1.1 200 OK\nContent-Type: text/plain\n\n" + response_body;
         send(new_socket, response.c_str(), response.size(), 0);
