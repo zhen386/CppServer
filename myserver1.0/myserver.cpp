@@ -7,6 +7,7 @@
 #include <netinet/in.h> // 网络字节序转换函数
 #include <string.h>     // 字符串处理函数
 #include <unistd.h>     // UNIX标准函数库
+#include "Logger.h"
 
 #define PORT 3531
 
@@ -16,6 +17,9 @@ std::map<std::string, RequestHandler> get_routes;
 std::map<std::string, RequestHandler> post_routes;
 
 void setupRoutes(){
+
+    LOG_INFO("Setting up routes");
+    
     // get请求处理表
     get_routes["/"] = [](const std::string& request){
         return "Hello from Macbook air!";
