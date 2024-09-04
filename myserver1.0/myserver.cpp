@@ -64,6 +64,9 @@ std::pair<std::string, std::string> parseHttpRequest(const std::string& request)
 
 // 处理http请求
 std::string handlerHttpRequest(const std::string& method, const std::string& uri, const std::string& body){
+
+    LOG_INFO("Handling HTTP request for URI: %s", uri.c_str());
+
     // 检查GET请求是否在路由表中
     if(method == "GET" && get_routes.count(uri) > 0){
         return get_routes[uri](body);
@@ -80,6 +83,8 @@ int main(){
     int addrlen = sizeof(address);
 
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    LOG_INFO("Socket created");
+
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
@@ -87,8 +92,10 @@ int main(){
     bind(server_fd, (struct sockaddr *)&address, sizeof(address));
 
     listen(server_fd, 3);
+    LOG_INFO("Server listening on port %d", PORT);
 
     setupRoutes();
+    LOG_INFO("Server starting");
 
     while(true){
 

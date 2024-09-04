@@ -1,0 +1,14 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/zhen/CppProjects/CppServer/tester/24.09.04'
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: __Z6test03v, symObjAddr: 0x0, symBinAddr: 0x100003D2C, symSize: 0xC }
+  - { offsetInCU: 0x33, offset: 0x33, size: 0x8, addend: 0x0, symName: __Z6test03v, symObjAddr: 0x0, symBinAddr: 0x100003D2C, symSize: 0xC }
+  - { offsetInCU: 0x5C, offset: 0x5C, size: 0x8, addend: 0x0, symName: __ZZ6test03vE1a, symObjAddr: 0x208, symBinAddr: 0x100008000, symSize: 0x0 }
+  - { offsetInCU: 0x46B5, offset: 0x46B5, size: 0x8, addend: 0x0, symName: __ZNSt3__14endlB8ue170006IcNS_11char_traitsIcEEEERNS_13basic_ostreamIT_T0_EES7_, symObjAddr: 0xB8, symBinAddr: 0x100003DE4, symSize: 0x58 }
+  - { offsetInCU: 0x46F5, offset: 0x46F5, size: 0x8, addend: 0x0, symName: __ZNSt3__19use_facetB8ue170006INS_5ctypeIcEEEERKT_RKNS_6localeE, symObjAddr: 0x194, symBinAddr: 0x100003EC0, symSize: 0x2C }
+  - { offsetInCU: 0x71A2, offset: 0x71A2, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0xC, symBinAddr: 0x100003D38, symSize: 0x80 }
+  - { offsetInCU: 0x7277, offset: 0x7277, size: 0x8, addend: 0x0, symName: __ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEElsB8ue170006EPFRS3_S4_E, symObjAddr: 0x8C, symBinAddr: 0x100003DB8, symSize: 0x2C }
+  - { offsetInCU: 0x72A9, offset: 0x72A9, size: 0x8, addend: 0x0, symName: __ZNKSt3__19basic_iosIcNS_11char_traitsIcEEE5widenB8ue170006Ec, symObjAddr: 0x110, symBinAddr: 0x100003E3C, symSize: 0x84 }
+  - { offsetInCU: 0x7315, offset: 0x7315, size: 0x8, addend: 0x0, symName: __ZNKSt3__15ctypeIcE5widenB8ue170006Ec, symObjAddr: 0x1C0, symBinAddr: 0x100003EEC, symSize: 0x38 }
+...
