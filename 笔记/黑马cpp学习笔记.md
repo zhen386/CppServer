@@ -477,6 +477,26 @@ int main(){
 }
 ```
 
+考虑其他类对象作为类成员变量的情况：
+
+```cpp
+class Phone{
+  std::string phoneNumber;
+};
+
+class Person{
+  std::string myName;
+  Phone myPhoneNumber;
+  
+  //先构造成员，再构造本体
+  Person(std::string name, std::string number): myName(name), myPhoneNumber(number){ }
+}
+```
+
+**在构造外层对象时，先调用内层对象成员的构造函数；析构时，先调用外层对象的析构函数。**
+
+思考两个不同大小的纸箱，当我们要打包较大的纸箱时，则需要先打包好小纸箱，将其放入大纸箱内，再进行大纸箱的打包；而在拆箱时，则应先拆外层纸箱，后拆内层纸箱。
+
 ## 深拷贝与浅拷贝
 
 编译器提供的默认拷贝构造函数，仅进行简单的值传递，可能会引起问题。
@@ -543,4 +563,95 @@ int main(){
 **此时，两个Person对象的身高变量为两个指向不同堆区内存块的指针变量，而这两个内存块存放的值相同。**
 
 不难发现，浅拷贝和深拷贝具有本质上的不同，且会产生一些使用上的不同特性：例如在进行深拷贝后，使用p1的指针操纵内存，由于两个指针所指向的是不同的内存块，p2指针所指的值并不会发生改变，而浅拷贝则相反。当然，在实际编写代码的时候要尽量避免对指针变量的浅拷贝的出现。
+
+## 静态成员变量、静态成员函数
+
+静态成员变量、静态成员函数属于类，可以通过类名调用，在编译时即分配内存。
+
+```cpp
+class Person{
+public:
+  static std::string name;
+  static std::string getName(){
+    return name;
+  }
+};
+
+std::string Person::name = "zhangsan";	//静态成员变量需要在类外初始化！
+
+int main(){
+  Person p;
+  std::cout << p.name << std::endl;							//通过对象访问静态变量
+  std::cout << Person::name << std::endl;				//通过类名访问静态变量
+  std::cout << p.getName() << std::endl;				//通过对象访问静态函数
+  std::cout << Person::getName() << std::endl;	//通过类名访问静态函数
+}
+```
+
+由于静态变量与静态函数在编译阶段被创建、分配内存，故其不属于任何实例化的对象，而视为属于类本身。**因此，静态成员函数无法访问非静态的成员变量！**
+
+值得注意的是，静态成员变量/静态成员函数同样具有访问权限。
+
+## this指针
+
+在内存中，对象的成员函数和成员变量是分开进行储存的。**每实例化一个对象，就会分配其对应的成员变量所需的空间，但整个类只会实例化一个成员函数，不同的对象调用的是相同的成员函数。**注意空对象会占用1个字节用于区分。
+
+那么就会出现一个问题，**怎样在调用成员函数时区分调用他的对象呢？**
+
+假设要设计一个返回调用对象的成员函数：
+
+```cpp
+class Person{
+public:
+	Person returnItself(){
+    return		//这里应该return什么？
+  }
+};
+```
+
+显然，在没有传入参数的情况下，成员函数无从得知是哪一个对象调用了他，因而也就无法返回该对象。此时应当使用this指针：
+
+```cpp
+class Person{
+public:
+  int age;
+  Person& ageIncrease(){ 		//注意返回的一定是引用！
+    age++;
+    return *this;			//对this指针进行解引用，即得到调用的对象
+  }
+};
+
+int main(){
+  Person p;
+  p.age = 1;
+  p.ageIncrease().ageIncrease().ageIncrease().ageIncrease();		//实现链式编程
+}
+```
+
+this指针的另一个用途，是用于区分成员变量与函数参数，解决名称冲突的问题：
+
+```cpp
+class Person{
+public:
+  int money;
+  
+  Person(int money){
+    this.money = money;		//解决重名问题
+  }
+}
+```
+
+## 初始化形参列表
+
+另一种初始化形参的语法。
+
+```cpp
+class Person{
+  int a;
+  int b;
+public:
+  Person(int c, int d): a(c), b(d){ }		//一个空实现的构造函数，使用列表法进行初始化形参
+  //Person(): a(10), b(20){ }  					//也可使用常量进行初始化
+};
+```
 
