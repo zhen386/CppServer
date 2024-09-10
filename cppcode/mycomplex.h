@@ -58,9 +58,9 @@ inline double getReal(const mycomplex& x)
     return x.getReal();
 }
 
-inline mycomplex operator + (const mycomplex& x, const mycomplex& y)          //何时可返回引用？何时应返回值？
+inline mycomplex operator + (const mycomplex& x, const mycomplex& y)        //何时可返回引用？何时应返回值？
 {         
-    return mycomplex(getReal(x) + getReal(y), getImag(x) + getImag(y));   //匿名对象
+    return mycomplex(getReal(x) + getReal(y), getImag(x) + getImag(y));     //匿名对象
 }
 
 inline mycomplex operator + (const mycomplex& x, const double y)            //同一运算符的多次重载
