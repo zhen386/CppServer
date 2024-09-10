@@ -6,6 +6,7 @@
 #include <cmath>
 #include <iostream>
 
+
 class ostream;         
 class mycomplex;
 
